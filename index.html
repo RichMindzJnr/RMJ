@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Digital Diary</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+
+            background:
+                radial-gradient(
+                    circle at top,
+                    #20364d,
+                    #080a0e 65%
+                );
+
+            transition: background 0.5s ease;
+        }
+
+        .app {
+            width: min(900px, 92%);
+            margin: auto;
+            padding: 40px 0;
+        }
+
+        /* HEADER */
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 36px;
+        }
+
+        header p {
+            color: #8c95a5;
+            margin-top: 6px;
+        }
+
+        #date {
+            color: #8c95a5;
+        }
+
+        /* DIARY BOX */
+
+        .diary {
+            padding: 20px;
+
+            border-radius: 20px;
+
+            background: rgba(255,255,255,0.07);
+
+            border: 1px solid rgba(255,255,255,0.1);
+
+            backdrop-filter: blur(15px);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 180px;
+
+            padding: 18px;
+
+            resize: vertical;
+
+            border: none;
+            outline: none;
+
+            border-radius: 15px;
+
+            background: rgba(0,0,0,0.25);
+
+            color: white;
+
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        textarea::placeholder {
+            color: #737b89;
+        }
+
+        /* BOTTOM */
+
+        .bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-top: 15px;
+
+            gap: 15px;
+        }
+
+        .moods {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mood {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 50%;
+
+            border: 1px solid rgba(255,255,255,0.1);
+
+            background: rgba(255,255,255,0.06);
+
+            cursor: pointer;
+
+            font-size: 20px;
+
+            transition: 0.2s;
+        }
+
+        .mood:hover {
+            transform: translateY(-3px);
+        }
+
+        .mood.active {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        /* SAVE */
+
+        #save {
+            border: none;
+
+            padding: 12px 20px;
+
+            border-radius: 12px;
+
+            background: white;
+            color: black;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        #save:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ENTRIES */
+
+        #entries {
+            margin-top: 25px;
+
+            display: grid;
+            gap: 15px;
+        }
+
+        .entry {
+            padding: 20px;
+
+            border-radius: 18px;
+
+            background: rgba(255,255,255,0.05);
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            animation: appear 0.3s ease;
+        }
+
+        .entry-top {
+            display: flex;
+            justify-content: space-between;
+
+            color: #9aa2b1;
+
+            font-size: 14px;
+        }
+
+        .entry-text {
+            margin-top: 12px;
+
+            line-height: 1.6;
+
+            white-space: pre-wrap;
+        }
+
+        @keyframes appear {
+
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+        /* MOOD THEMES */
+
+        body.calm {
+            background:
+                radial-gradient(
+                    circle at top,
+                    #153b50,
+                    #080b10 65%
+                );
+        }
+
+        body.happy {
+            background:
+                radial-gradient(
+                    circle at top,
+                    #594514,
+                    #0b0c10 65%
+                );
+        }
+
+        body.stressed {
+            background:
+                radial-gradient(
+                    circle at top,
+                    #541d28,
+                    #0c090c 65%
+                );
+        }
+
+        body.sad {
+            background:
+                radial-gradient(
+                    circle at top,
+                    #202b54,
+                    #080a10 65%
+                );
+        }
+
+        body.excited {
+            background:
+                radial-gradient(
+                    circle at top,
+                    #4c1b61,
+                    #0d090f 65%
+                );
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .bottom {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #save {
+                width: 100%;
+            }
+
+        }
+    </style>
+</head>
+
+
+<body class="calm">
+
+    <main class="app">
+
+        <header>
+
+            <div>
+                <h1>My Digital Diary</h1>
+
+                <p>
+                    A little space for your thoughts.
+                </p>
+            </div>
+
+            <div id="date"></div>
+
+        </header>
+
+
+        <section class="diary">
+
+            <textarea
+                id="text"
+                placeholder="What's on your mind today?"
+            ></textarea>
+
+
+            <div class="bottom">
+
+                <div class="moods">
+
+                    <button
+                        class="mood active"
+                        data-mood="calm"
+                    >
+                        😌
+                    </button>
+
+                    <button
+                        class="mood"
+                        data-mood="happy"
+                    >
+                        😊
+                    </button>
+
+                    <button
+                        class="mood"
+                        data-mood="stressed"
+                    >
+                        😵
+                    </button>
+
+                    <button
+                        class="mood"
+                        data-mood="sad"
+                    >
+                        😔
+                    </button>
+
+                    <button
+                        class="mood"
+                        data-mood="excited"
+                    >
+                        🤩
+                    </button>
+
+                </div>
+
+
+                <button id="save">
+                    Save Entry
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <section id="entries"></section>
+
+    </main>
+
+
+    <script>
+
+        // -------------------------
+        // VARIABLES
+        // -------------------------
+
+        const text =
+            document.getElementById("text");
+
+        const save =
+            document.getElementById("save");
+
+        const entries =
+            document.getElementById("entries");
+
+        const date =
+            document.getElementById("date");
+
+        const moods =
+            document.querySelectorAll(".mood");
+
+
+        let selectedMood = "calm";
+
+
+        // -------------------------
+        // DATE
+        // -------------------------
+
+        date.textContent =
+            new Date().toLocaleDateString(
+                "en-US",
+                {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric"
+                }
+            );
+
+
+        // -------------------------
+        // MOOD SELECTION
+        // -------------------------
+
+        moods.forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    selectedMood =
+                        button.dataset.mood;
+
+
+                    moods.forEach(
+                        mood => {
+                            mood.classList.remove(
+                                "active"
+                            );
+                        }
+                    );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    document.body.className =
+                        selectedMood;
+
+                }
+            );
+
+        });
+
+
+        // -------------------------
+        // SAVE
+        // -------------------------
+
+        save.addEventListener(
+            "click",
+            () => {
+
+                const value =
+                    text.value.trim();
+
+
+                if (!value) {
+
+                    alert(
+                        "Write something first."
+                    );
+
+                    return;
+                }
+
+
+                const entry = {
+
+                    text: value,
+
+                    mood: selectedMood,
+
+                    date:
+                        new Date()
+                        .toLocaleString()
+
+                };
+
+
+                const oldEntries =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "diary"
+                        )
+                    ) || [];
+
+
+                oldEntries.unshift(entry);
+
+
+                localStorage.setItem(
+                    "diary",
+                    JSON.stringify(
+                        oldEntries
+                    )
+                );
+
+
+                text.value = "";
+
+
+                displayEntries();
+
+            }
+        );
+
+
+        // -------------------------
+        // DISPLAY ENTRIES
+        // -------------------------
+
+        function displayEntries() {
+
+            const oldEntries =
+                JSON.parse(
+                    localStorage.getItem(
+                        "diary"
+                    )
+                ) || [];
+
+
+            entries.innerHTML = "";
+
+
+            const emoji = {
+
+                calm: "😌",
+
+                happy: "😊",
+
+                stressed: "😵",
+
+                sad: "😔",
+
+                excited: "🤩"
+
+            };
+
+
+            oldEntries.forEach(
+                entry => {
+
+                    const div =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    div.className =
+                        "entry";
+
+
+                    div.innerHTML = `
+
+                        <div class="entry-top">
+
+                            <span>
+                                ${emoji[entry.mood]}
+                                ${entry.mood}
+                            </span>
+
+                            <span>
+                                ${entry.date}
+                            </span>
+
+                        </div>
+
+                        <div class="entry-text">
+                        </div>
+
+                    `;
+
+
+                    div.querySelector(
+                        ".entry-text"
+                    ).textContent =
+                        entry.text;
+
+
+                    entries.appendChild(div);
+
+                }
+            );
+
+        }
+
+
+        // Load saved diary entries
+        displayEntries();
+
+    </script>
+
+</body>
+</html>
